@@ -354,7 +354,7 @@ angular.module('mentio', [])
 
                 scope.$watch(
                     'ngModel',
-                    function (newValue) {
+                    function (newValue, oldValue) {
                         /*jshint maxcomplexity:14 */
                         /*jshint maxstatements:39 */
                         // yes this function needs refactoring
@@ -365,6 +365,16 @@ angular.module('mentio', [])
                         if (scope.triggerCharSet === undefined) {
                             $log.error('Error, no mentio-items attribute was provided, ' +
                                 'and no separate mentio-menus were specified.  Nothing to do.');
+                            return;
+                        }
+
+                        var haveSameMentions = mentioUtil.haveSameMentions(scope.triggerCharSet,
+                                                                           newValue,
+                                                                           oldValue);
+
+                        if (haveSameMentions) {
+                            // do not trigger popup when mentions don't change
+                            // will supress popup when deleting trailing space after mention
                             return;
                         }
 

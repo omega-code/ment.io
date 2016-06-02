@@ -539,6 +539,36 @@ angular.module('mentio')
             return coordinates;
         }
 
+        /**
+         * Check if two strings have the same mentions in the same order
+         * @param {array} mentionChars - The character triggers mention, use array for consistency
+         * @param {string} str1 - The first string
+         * @param {string} str2 - The second string
+         * @return {true|false|null} Truthy if two strings have the same mentions in the same order
+         */
+        function haveSameMentions(mentionChars, str1, str2) {
+            if (mentionChars && str1 && str2) {
+                var mentionRegex = new RegExp('\\' + mentionChars[0] + '\\w+', 'g');
+                var mentions1 = str1.match(mentionRegex);
+                var mentions2 = str2.match(mentionRegex);
+
+                return mentions1 && mentions2 && arrayContentsEqual(mentions1, mentions2);
+            }
+
+            return false;
+        }
+
+        /**
+         * Check if two arrays have the same content
+         * @param {array} arr1 - The first array
+         * @param {array} arr2 - The second array
+         * @return {boolean} True if two strings have the same contents
+         */
+        function arrayContentsEqual(arr1, arr2) {
+            return (arr1.length === arr2.length) &&
+                arr1.every(function(val, index) { return val === arr2[index]; });
+        }
+
         return {
             // public
             popUnderMention: popUnderMention,
@@ -547,6 +577,7 @@ angular.module('mentio')
             getMacroMatch: getMacroMatch,
             getTriggerInfo: getTriggerInfo,
             selectElement: selectElement,
+            haveSameMentions: haveSameMentions,
 
 
 

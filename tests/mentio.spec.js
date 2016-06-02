@@ -381,7 +381,8 @@ describe('mentio-menu', function () {
 
         mentioUtilService.selectElement(null, elem[0], [0], 0);
 
-        var coordinates = mentioUtilService.getContentEditableCaretPosition(null, 2);
+        var selectionEl = [{}];
+        var coordinates = mentioUtilService.getContentEditableCaretPosition(null, 2, selectionEl);
 
         expect(coordinates.top).toBeGreaterThan(0);
         expect(coordinates.left).toBeGreaterThan(0);
@@ -662,5 +663,40 @@ describe('mentio-menu', function () {
         expect(document.getElementsByTagName('mentio-menu').length).toBe(1);
         $scope.$broadcast('$destroy');
         expect(document.getElementsByTagName('mentio-menu').length).toBe(0);
+    });
+
+    describe('mentioUtil#haveSameMentions', function() {
+        var mentionChars = ['@'];
+        var result;
+
+        describe('some input string is null or undefined', function() {
+            it('returns falsy value', function() {
+                var str1 = '@abc';
+                var str2 = undefined;
+
+                result = mentioUtilService.haveSameMentions(mentionChars, str1, str2);
+                expect(result).toBeFalsy();
+            });
+        });
+
+        describe('input strings do not have mentions', function() {
+            it('returns falsy value', function() {
+                var str1 = 'abc';
+                var str2 = 'def ghi';
+
+                result = mentioUtilService.haveSameMentions(mentionChars, str1, str2);
+                expect(result).toBeFalsy();
+            });
+        });
+
+        describe('input strings have same mentions', function() {
+            it('returns truthy value', function() {
+                var str1 = '@publish and @ad';
+                var str2 = '@publish and @ad, more text';
+
+                result = mentioUtilService.haveSameMentions(mentionChars, str1, str2);
+                expect(result).toBeTruthy();
+            });
+        });
     });
 });
