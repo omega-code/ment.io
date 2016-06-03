@@ -368,14 +368,17 @@ angular.module('mentio', [])
                             return;
                         }
 
-                        var haveSameMentions = mentioUtil.haveSameMentions(scope.triggerCharSet,
-                                                                           newValue,
-                                                                           oldValue);
-
-                        if (haveSameMentions) {
-                            // do not trigger popup when mentions don't change
-                            // will supress popup when deleting trailing space after mention
-                            return;
+                        if (!scope.isActive()) {
+                            var haveSameMentions = mentioUtil.haveSameMentions(scope.triggerCharSet,
+                                                                                newValue,
+                                                                                oldValue);
+                            if (haveSameMentions) {
+                                /**
+                                 * do not trigger popup when mentions don't change
+                                 * will supress popup when deleting trailing space after mention
+                                 */
+                                return;
+                            }
                         }
 
                         if (scope.contentEditableMenuPasted) {
