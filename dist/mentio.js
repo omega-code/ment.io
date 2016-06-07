@@ -698,7 +698,7 @@ angular.module('mentio', [])
 'use strict';
 
 angular.module('mentio')
-    .factory('mentioUtil', ["$window", "$location", "$anchorScroll", "$timeout", function ($window, $location, $anchorScroll, $timeout) {
+    .factory('mentioUtil', ["$window", "$location", "$anchorScroll", "$timeout", "$sce", function ($window, $location, $anchorScroll, $timeout, $sce) {
 
         // public
         function popUnderMention (ctx, triggerCharSet, selectionEl, requireLeadingSpace) {
@@ -1246,13 +1246,23 @@ angular.module('mentio')
         function haveSameMentions(mentionChars, str1, str2) {
             if (mentionChars && str1 && str2) {
                 var mentionRegex = new RegExp('\\' + mentionChars[0] + '\\w+', 'g');
-                var mentions1 = str1.match(mentionRegex);
-                var mentions2 = str2.match(mentionRegex);
+                var mentions1 = unescapeSceString(str1).match(mentionRegex);
+                var mentions2 = unescapeSceString(str2).match(mentionRegex);
 
                 return mentions1 && mentions2 && arrayContentsEqual(mentions1, mentions2);
             }
 
             return false;
+        }
+
+        /**
+         * Check if the string is wrapper by $sce and return a plain string instead
+         * of an object
+         * @param  {Object/String} str - String or $sce.trustByHtml wrapper
+         * @return {String}
+         */
+        function unescapeSceString(str) {
+            return typeof str === 'object' ? $sce.getTrustedHtml(str) : str;
         }
 
         /**
