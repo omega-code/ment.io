@@ -1230,12 +1230,13 @@ angular.module('mentio')
                 left: span.offsetLeft + parseInt(computed.borderLeftWidth)
             };
 
-            if (selectionEl[0].parentNode === document.body) {
+            if (element[0].parentNode === document.body) {
                 localToGlobalCoordinates(ctx, element, coordinates);
             } else {
                 coordinates.left += element.offsetLeft;
                 coordinates.top += element.offsetTop;
             }
+            localToGlobalCoordinates(ctx, element, coordinates);
 
             getDocument(ctx).body.removeChild(div);
 
