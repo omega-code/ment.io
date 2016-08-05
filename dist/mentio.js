@@ -1226,17 +1226,12 @@ angular.module('mentio')
             div.appendChild(span);
 
             var coordinates = {
-                top: span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
+                top: span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) + 5,
                 left: span.offsetLeft + parseInt(computed.borderLeftWidth)
             };
 
-            if (element[0].parentNode === document.body) {
-                localToGlobalCoordinates(ctx, element, coordinates);
-            } else {
-                coordinates.left += element.offsetLeft;
-                coordinates.top += element.offsetTop;
-            }
-            localToGlobalCoordinates(ctx, element, coordinates);
+            coordinates.left += element.offsetLeft;
+            coordinates.top += element.offsetTop;
 
             getDocument(ctx).body.removeChild(div);
 
