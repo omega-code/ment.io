@@ -19,6 +19,7 @@ angular.module('mentio', [])
                 ngModel: '='
             },
             controller: ["$scope", "$timeout", "$attrs", function($scope, $timeout, $attrs) {
+				this.showtop = $attrs.showtop;
 
                 $scope.query = function (triggerChar, triggerText) {
                     var remoteScope = $scope.triggerCharMap[triggerChar];
@@ -624,6 +625,7 @@ angular.module('mentio', [])
                     var menuEl = element[0];
                     var menuItemsList = menuEl.querySelector('ul');
                     var menuItem = menuEl.querySelector('[mentio-menu-item].active');
+					//menuEl.querySelector('[data-mentio-menu-item].active'));  may be needed
 
                     if (scope.isFirstItemActive()) {
                         return menuItemsList.scrollTop = 0;
@@ -666,7 +668,11 @@ angular.module('mentio', [])
                         controller.activate(scope.item);
                     });
                 });
-
+            //Для iOS/Mobile
+			element.bind('tap', function () {
+                    controller.selectItem(scope.item);
+                    return false;
+                });
                 element.bind('click', function () {
                     controller.selectItem(scope.item);
                     return false;
@@ -716,13 +722,25 @@ angular.module('mentio')
                 }
 
                 // Move the button into place.
-                selectionEl.css({
-                    top: coordinates.top + 'px',
-                    left: coordinates.left + 'px',
-                    position: 'absolute',
-                    zIndex: 100,
-                    display: 'block'
-                });
+				//Add some magic for showOnTop
+               if (coordinates.showtop) {
+                    selectionEl.css({
+                        bottom: (coordinates.bottom+18) + 'px',
+                        left: coordinates.left + 'px',
+                        position: 'absolute',
+                        zIndex: 10000,
+                        display: 'block'
+                    });
+                } else {
+                    selectionEl.css({
+                        top: (coordinates.top+5) + 'px',
+                        left: coordinates.left + 'px',
+                        position: 'absolute',
+                        zIndex: 10000,
+
+                        display: 'block'
+                    });
+                }
 
                 $timeout(function(){
                     scrollIntoView(ctx, selectionEl);
@@ -1125,7 +1143,7 @@ angular.module('mentio')
 
             if (selectionEl[0].parentNode === document.body) {
                 localToGlobalCoordinates(ctx, markerEl, coordinates);
-            } else {
+            } else { //Надо обратить внимание и проверить как этот блок отрабатывает
                 coordinates.left += markerEl.offsetLeft;
                 coordinates.top += markerEl.offsetTop;
             }
@@ -1231,7 +1249,7 @@ angular.module('mentio')
             };
 
             localToGlobalCoordinates(ctx, element, coordinates);
-
+			coordinates.showtop = element.getAttribute('showtop')=='true';
             getDocument(ctx).body.removeChild(div);
 
             return coordinates;
